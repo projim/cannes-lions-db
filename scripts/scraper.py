@@ -67,6 +67,10 @@ ENTRY_NO_CAT = re.compile(
     re.UNICODE,
 )
 
+# 偵測完整行中的 [CATEGORY] 前綴（類別文字在 <a> 標籤外部）
+# 例：[FILM] Campaign Name – Brand (Agency City)
+ENTRY_CAT_PREFIX = re.compile(r"^\[([^\]]+)\]\s+(.+)$", re.UNICODE)
+
 # ──────────────────────────────────────────────
 # 工具函式
 # ──────────────────────────────────────────────
@@ -187,20 +191,30 @@ def scrape_year(year: int) -> list[dict]:
         print("  ✗ 找不到內容區域")
         return []
 
-    # ── Step 1：從全文建立「行 → 獎項等級」對應表 ──
-    # 頁面結構：GRAND PRIX / GOLD / SILVER / BRONZE 是純文字標題
-    # 條目是 <a> 包住的文字
+    # ── Step 1：從全文建立「行 → 獎項等級」及「連結文字 → 類別」對應表 ──
+    # 頁面結構：
+    #   GRAND PRIX / GOLD / SILVER / BRONZE 是純文字標題
+    #   [FILM] Campaign – Brand (Agency) ← [CATEGORY] 在 <a> 標籤外部，<a> 只含後半段
     full_lines = [l.strip() for l in content_area.get_text(separator="\n").split("\n") if l.strip()]
 
     award_by_line: dict[str, str] = {}
+    category_by_link_text: dict[str, str] = {}   # <a> 文字 → 坎城類別
     current_award = "Unknown"
     for line in full_lines:
         level = detect_award_level(line)
         if level:
             current_award = level
             print(f"    → 進入等級：{current_award}")
-        elif line not in award_by_line:
-            award_by_line[line] = current_award
+        else:
+            # 偵測 [CATEGORY] 前綴行，例：[FILM] The Misheard Version – Specsavers (Golin London)
+            cat_m = ENTRY_CAT_PREFIX.match(line)
+            if cat_m:
+                cat_raw  = cat_m.group(1).strip()
+                link_txt = cat_m.group(2).strip()
+                cats     = [c.strip().title() for c in cat_raw.split("+")]
+                category_by_link_text[link_txt] = cats[0]
+            if line not in award_by_line:
+                award_by_line[line] = current_award
 
     # ── Step 2：找所有 <a> 標籤並解析 ──
     entries = []
@@ -218,6 +232,9 @@ def scrape_year(year: int) -> list[dict]:
         award_level = award_by_line.get(text, current_award)
         entry = parse_entry(text, href, award_level, year)
         if entry:
+            # [CATEGORY] 在 <a> 外部時，parse_entry 無法取得類別 → 這裡補上
+            if not entry.get("cannes_category") and text in category_by_link_text:
+                entry["cannes_category"] = category_by_link_text[text]
             entries.append(entry)
         elif ("–" in text or "—" in text) and len(text) > 10:
             failed.append({"raw_text": text, "year": year})

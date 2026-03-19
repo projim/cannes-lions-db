@@ -83,7 +83,7 @@ function applyFilters() {
     if (media && d.media_type !== media)                         return false;
     if (q) {
       const hay = [d.campaign_name, d.brand, d.agency, d.city,
-                   d.description_zh, d.description_en].join(" ").toLowerCase();
+                   d.cannes_category, d.description_zh, d.description_en].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
