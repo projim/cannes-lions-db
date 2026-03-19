@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🦁 Cannes Lions 得獎資料庫 2015–2025</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>🦁 Cannes Lions 得獎資料庫</h1>
+      <p class="subtitle">2015 – 2025 · <span id="total-count">載入中...</span> 筆得獎紀錄</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="search-bar">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="搜尋作品名、品牌、代理商..."
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="filters">
+      <select id="filter-year">
+        <option value="">所有年份</option>
+      </select>
+      <select id="filter-award">
+        <option value="">所有獎項</option>
+        <option value="Grand Prix">Grand Prix</option>
+        <option value="Titanium">Titanium</option>
+        <option value="Gold">Gold</option>
+        <option value="Silver">Silver</option>
+        <option value="Bronze">Bronze</option>
+      </select>
+      <select id="filter-category">
+        <option value="">所有類別</option>
+      </select>
+      <select id="filter-media">
+        <option value="">所有媒體</option>
+        <option value="影片">影片</option>
+        <option value="圖片">圖片</option>
+        <option value="其他">其他</option>
+      </select>
+      <button id="clear-filters">清除篩選</button>
+    </div>
+
+    <div id="results-count" class="results-count"></div>
+
+    <div id="cards-container" class="cards-container">
+      <div class="loading">載入資料中...</div>
+    </div>
+  </main>
+
+  <footer>
+    <p>資料來源：<a href="https://lovetheworkmore.com" target="_blank">lovetheworkmore.com</a> ·
+    Cannes Lions International Festival of Creativity</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Google Drive API 憑證（絕對不上傳）
+scripts/credentials.json
+scripts/token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# 暫存下載
+scripts/temp/
+*.mp4
+*.jpg
+*.png
+
+# OS
+.DS_Store
+Thumbs.db
