@@ -16,6 +16,9 @@ venv/
 
 # 暫存下載
 scripts/temp/
+
+# Scraper 除錯輸出（不需上傳）
+docs/data/parse_failed_*.json
 *.mp4
 *.jpg
 *.png
