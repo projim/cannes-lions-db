@@ -216,6 +216,9 @@ main {
   display: block;
 }
 
+/* 確保 HTML hidden 屬性不被 CSS 覆蓋 */
+[hidden] { display: none !important; }
+
 .desc-toggle {
   background: none;
   border: none;
