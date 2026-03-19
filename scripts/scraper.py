@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 # ──────────────────────────────────────────────
 
 BASE_DIR = Path(__file__).parent.parent
-DATA_DIR = BASE_DIR / "data"
+DATA_DIR = BASE_DIR / "docs" / "data"
 SCRIPTS_DIR = Path(__file__).parent
 
 HEADERS = {

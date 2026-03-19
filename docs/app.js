@@ -1,7 +1,7 @@
 "use strict";
 
 // ── 設定 ──
-const DATA_URL = "../data/cannes_winners.json";
+const DATA_URL = "data/cannes_winners.json";
 
 // ── 狀態 ──
 let allData = [];
