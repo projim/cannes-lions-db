@@ -203,6 +203,30 @@ main {
 .card-meta .brand { color: var(--text); font-weight: 600; }
 .card-meta .sep   { margin: 0 4px; }
 
+/* 說明區塊 */
+.card-desc {
+  font-size: 0.82rem;
+  color: #aaa;
+  line-height: 1.5;
+  border-left: 2px solid var(--border);
+  padding-left: 8px;
+}
+
+.desc-full {
+  display: block;
+}
+
+.desc-toggle {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+}
+.desc-toggle:hover { text-decoration: underline; }
+
 /* Card actions */
 .card-actions {
   display: flex;

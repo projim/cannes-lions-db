@@ -82,7 +82,8 @@ function applyFilters() {
     if (cat   && d.cannes_category !== cat)                      return false;
     if (media && d.media_type !== media)                         return false;
     if (q) {
-      const hay = [d.campaign_name, d.brand, d.agency, d.city].join(" ").toLowerCase();
+      const hay = [d.campaign_name, d.brand, d.agency, d.city,
+                   d.description_zh, d.description_en].join(" ").toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -153,6 +154,18 @@ function cardHTML(d) {
 
   const agency = [d.agency, d.city].filter(Boolean).join(", ");
 
+  // 說明區塊：優先顯示中文，沒有則顯示英文，都沒有則不顯示
+  const descText = d.description_zh || d.description_en || "";
+  const descHTML = descText
+    ? `<div class="card-desc">
+         <span class="desc-preview">${escHtml(descText.slice(0, 80))}${descText.length > 80 ? "…" : ""}</span>
+         ${descText.length > 80
+           ? `<button class="desc-toggle" onclick="toggleDesc(this)">展開</button>
+              <span class="desc-full" hidden>${escHtml(descText)}</span>`
+           : ""}
+       </div>`
+    : "";
+
   return `
     <div class="card">
       <div class="card-header">
@@ -166,11 +179,26 @@ function cardHTML(d) {
         <span class="sep">·</span>
         <span>${escHtml(agency)}</span>
       </div>
+      ${descHTML}
       <div class="card-actions">
         ${urlLink}
         ${driveLink}
       </div>
     </div>`;
+}
+
+function toggleDesc(btn) {
+  const preview = btn.previousElementSibling;
+  const full = btn.nextElementSibling;
+  if (full.hidden) {
+    full.hidden = false;
+    preview.hidden = true;
+    btn.textContent = "收起";
+  } else {
+    full.hidden = true;
+    preview.hidden = false;
+    btn.textContent = "展開";
+  }
 }
 
 function escHtml(str) {

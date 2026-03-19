@@ -6,3 +6,6 @@ google-api-python-client==2.100.0
 google-auth==2.23.0
 google-auth-oauthlib==1.1.0
 google-auth-httplib2==0.1.1
+# 翻譯（Phase 2）
+googletrans==4.0.0rc1
+httpx==0.13.3
