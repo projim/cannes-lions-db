@@ -1,0 +1,71 @@
+name: Fetch Descriptions & Translate
+
+on:
+  # 手動從 GitHub 網頁觸發（Actions → Run workflow）
+  workflow_dispatch:
+
+  # 或自動排程：每天台灣時間 23:00（UTC 15:00）
+  # schedule:
+  #   - cron: '0 15 * * *'
+
+jobs:
+  fetch-and-translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300  # 最多跑 5 小時
+
+    permissions:
+      contents: write  # 允許 commit + push
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install \
+            requests==2.31.0 \
+            beautifulsoup4==4.12.2 \
+            lxml==4.9.3 \
+            googletrans==4.0.0rc1 \
+            httpx==0.13.3
+
+      - name: Run description fetcher
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          echo "=== 開始抓取說明 ==="
+          python scripts/description_fetcher.py
+          echo "=== 抓取完成 ==="
+
+      - name: Run translator
+        run: |
+          echo "=== 開始翻譯 ==="
+          python scripts/translator.py
+          echo "=== 翻譯完成 ==="
+
+      - name: Show stats
+        run: |
+          python -c "
+          import json
+          d = json.load(open('docs/data/cannes_winners.json'))
+          has_en = sum(1 for x in d if x.get('description_en'))
+          has_zh = sum(1 for x in d if x.get('description_zh'))
+          print(f'總筆數: {len(d)}')
+          print(f'有說明: {has_en} ({round(has_en/len(d)*100)}%)')
+          print(f'有翻譯: {has_zh} ({round(has_zh/len(d)*100)}%)')
+          "
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/data/cannes_winners.json
+          git diff --staged --quiet && echo "No changes to commit" || \
+            git commit -m "Auto: fetch descriptions & translate ($(date +'%Y-%m-%d'))" && \
+            git push
